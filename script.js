@@ -151,8 +151,11 @@ const FLAME_TL = () =>
 timeline({}).
 to('.cake__candle', { '--flame': 1, stagger: 0.2, duration: 0.1 }).
 to('body', { '--flame': 1, '--lightness': 5, duration: 0.2, delay: 0.2 });
+
 const LIGHTS_OUT = () =>
-timeline().to('body', {
+timeline().
+to('.birthday-message', { opacity: 0, duration: 0.2 }, 0).
+to('body', {
   onStart: () => SOUNDS.BLOW.play(),
   delay: 0.5,
   '--lightness': 0,
@@ -164,6 +167,7 @@ timeline().to('body', {
 
 
 const RESET = () => {
+  set('.birthday-message', { opacity: 0 });
   set('.char', {
     '--hue': () => Math.random() * 360,
     '--char-sat': 0,
@@ -240,13 +244,17 @@ add(LIGHTS_OUT(), 'LIGHTS_OUT');
 
 SOUNDS.TUNE.onended = SOUNDS.MATCH.onended = () => MASTER_TL.play();
 MASTER_TL.addPause('FLAME_ON', () => SOUNDS.MATCH.play());
-MASTER_TL.addPause('LIGHTS_OUT', () => SOUNDS.TUNE.play());
+MASTER_TL.addPause('LIGHTS_OUT', () => {
+  SOUNDS.TUNE.play();
+  to('.birthday-message', { opacity: 1, duration: 0.5, delay: 0.2 });
+});
 BTN.addEventListener('click', () => {
   BTN.setAttribute('disabled', true);
   MASTER_TL.restart();
 });
 
-SOUNDS.TUNE.muted = SOUNDS.MATCH.muted = SOUNDS.HORN.muted = SOUNDS.POP.muted = SOUNDS.CHEER.muted = SOUNDS.BLOW.muted = SOUNDS.ON.muted = true;
+// THIS IS THE CHANGED LINE
+SOUNDS.TUNE.muted = SOUNDS.MATCH.muted = SOUNDS.HORN.muted = SOUNDS.POP.muted = SOUNDS.CHEER.muted = SOUNDS.BLOW.muted = SOUNDS.ON.muted = false;
 
 const toggleAudio = () => {
   SOUNDS.TUNE.muted = SOUNDS.MATCH.muted = SOUNDS.POP.muted = SOUNDS.HORN.muted = SOUNDS.CHEER.muted = SOUNDS.BLOW.muted = SOUNDS.ON.muted = !SOUNDS.
